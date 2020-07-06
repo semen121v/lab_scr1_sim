@@ -1,0 +1,160 @@
+
+/home/semen/scr1/build/verilator_AHB_IMC/sbreak.elf:     формат файла elf32-littleriscv
+
+
+Дизассемблирование раздела .text.init:
+
+00000000 <SIM_EXIT-0xf4>:
+	...
+
+000000f4 <SIM_EXIT>:
+      f4:	00000013          	nop
+
+000000f8 <SIM_STOP>:
+      f8:	0000006f          	j	f8 <SIM_STOP>
+      fc:	ffff                	0xffff
+      fe:	ffff                	0xffff
+	...
+
+00000840 <trap_vector>:
+     840:	34202773          	csrr	a4,mcause
+     844:	47a1                	li	a5,8
+     846:	04f70463          	beq	a4,a5,88e <_report>
+     84a:	47a5                	li	a5,9
+     84c:	04f70163          	beq	a4,a5,88e <_report>
+     850:	47ad                	li	a5,11
+     852:	02f70e63          	beq	a4,a5,88e <_report>
+     856:	478d                	li	a5,3
+     858:	00f71f63          	bne	a4,a5,876 <trap_vector+0x36>
+     85c:	f00005b7          	lui	a1,0xf0000
+     860:	04200793          	li	a5,66
+     864:	00f58023          	sb	a5,0(a1) # f0000000 <__global_pointer$+0xefffe678>
+     868:	05000793          	li	a5,80
+     86c:	00f58023          	sb	a5,0(a1)
+     870:	47a9                	li	a5,10
+     872:	00f58023          	sb	a5,0(a1)
+     876:	00001717          	auipc	a4,0x1
+     87a:	82e70713          	addi	a4,a4,-2002 # 10a4 <mtvec_handler>
+     87e:	c311                	beqz	a4,882 <trap_vector+0x42>
+     880:	8702                	jr	a4
+     882:	34202773          	csrr	a4,mcause
+     886:	00075363          	bgez	a4,88c <handle_exception>
+     88a:	a009                	j	88c <handle_exception>
+
+0000088c <handle_exception>:
+     88c:	4505                	li	a0,1
+
+0000088e <_report>:
+     88e:	0330006f          	j	10c0 <sc_exit>
+     892:	00000013          	nop
+     896:	00000013          	nop
+     89a:	00000013          	nop
+     89e:	00000013          	nop
+     8a2:	00000013          	nop
+     8a6:	00000013          	nop
+     8aa:	00000013          	nop
+     8ae:	00000013          	nop
+     8b2:	00000013          	nop
+     8b6:	00000013          	nop
+     8ba:	00000013          	nop
+     8be:	0001                	nop
+	...
+
+00001000 <_start>:
+    1000:	f1402573          	csrr	a0,mhartid
+    1004:	e101                	bnez	a0,1004 <_start+0x4>
+    1006:	4e01                	li	t3,0
+    1008:	00000297          	auipc	t0,0x0
+    100c:	83828293          	addi	t0,t0,-1992 # 840 <trap_vector>
+    1010:	30529073          	csrw	mtvec,t0
+    1014:	4505                	li	a0,1
+    1016:	057e                	slli	a0,a0,0x1f
+    1018:	00054863          	bltz	a0,1028 <_start+0x28>
+    101c:	0ff0000f          	fence
+    1020:	85f2                	mv	a1,t3
+    1022:	4501                	li	a0,0
+    1024:	00000073          	ecall
+    1028:	fffff297          	auipc	t0,0xfffff
+    102c:	fd828293          	addi	t0,t0,-40 # 0 <CL_SIZE-0x20>
+    1030:	02028063          	beqz	t0,1050 <_start+0x50>
+    1034:	10529073          	csrw	stvec,t0
+    1038:	0000b2b7          	lui	t0,0xb
+    103c:	10928293          	addi	t0,t0,265 # b109 <__global_pointer$+0x9781>
+    1040:	30229073          	csrw	medeleg,t0
+    1044:	30202373          	csrr	t1,medeleg
+    1048:	00628463          	beq	t0,t1,1050 <_start+0x50>
+    104c:	841ff06f          	j	88c <handle_exception>
+    1050:	30005073          	csrwi	mstatus,0
+    1054:	00002537          	lui	a0,0x2
+    1058:	80050513          	addi	a0,a0,-2048 # 1800 <_end+0x660>
+    105c:	30052073          	csrs	mstatus,a0
+    1060:	00000297          	auipc	t0,0x0
+    1064:	02028293          	addi	t0,t0,32 # 1080 <_run_test>
+    1068:	34129073          	csrw	mepc,t0
+    106c:	f1402573          	csrr	a0,mhartid
+    1070:	30200073          	mret
+
+Дизассемблирование раздела .text:
+
+00001080 <_run_test>:
+    1080:	4e09                	li	t3,2
+    1082:	9002                	ebreak
+    1084:	a019                	j	108a <fail>
+    1086:	01c01863          	bne	zero,t3,1096 <pass>
+
+0000108a <fail>:
+    108a:	0ff0000f          	fence
+    108e:	85f2                	mv	a1,t3
+    1090:	4505                	li	a0,1
+    1092:	00000073          	ecall
+
+00001096 <pass>:
+    1096:	0ff0000f          	fence
+    109a:	85f2                	mv	a1,t3
+    109c:	4501                	li	a0,0
+    109e:	00000073          	ecall
+    10a2:	0001                	nop
+
+000010a4 <mtvec_handler>:
+    10a4:	430d                	li	t1,3
+    10a6:	342022f3          	csrr	t0,mcause
+    10aa:	fe6290e3          	bne	t0,t1,108a <fail>
+    10ae:	b7e5                	j	1096 <pass>
+
+000010b0 <ecall>:
+    10b0:	00000073          	ecall
+	...
+
+000010c0 <sc_exit>:
+    10c0:	834ff06f          	j	f4 <SIM_EXIT>
+    10c4:	00000013          	nop
+    10c8:	00000013          	nop
+    10cc:	00000013          	nop
+    10d0:	00000013          	nop
+    10d4:	00000013          	nop
+    10d8:	00000013          	nop
+    10dc:	00000013          	nop
+	...
+
+Дизассемблирование раздела .data:
+
+00001100 <begin_regstate>:
+	...
+
+Дизассемблирование раздела .tohost:
+
+00001140 <tohost>:
+	...
+
+00001180 <fromhost>:
+	...
+
+Дизассемблирование раздела .sdata:
+
+00001188 <__global_pointer$-0x800>:
+	...
+
+Дизассемблирование раздела .stack:
+
+0000fc00 <.stack>:
+	...
