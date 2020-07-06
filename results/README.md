@@ -4,7 +4,7 @@
 
 |Вар.	|   Вид исключения	|   Тест	|   Reset Vector	|   Trap Vector     |	При обработке
 |------ | -----------       |------     | -----------       |------             | -----------
-|├─3	|   Breakpoint      | isa/rv32mi/sbreak.S |  0x1000 | 0x840             |  BP
+| 3	|   Breakpoint      | isa/rv32mi/sbreak.S |  0x1000 | 0x840             |  BP
 
 Цель:
 
