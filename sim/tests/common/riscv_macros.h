@@ -5,11 +5,7 @@
 
 #include "riscv_csr_encoding.h"
 #include "sc_test.h"
-#define SC_SIM_OUTPORT (0xf0000000) 
 
-#define PRINT_CHAR(char)\
-  li a5, (char); \
-  sb a5, 0(a1)
 //-----------------------------------------------------------------------
 // Begin Macro
 //-----------------------------------------------------------------------
@@ -107,7 +103,7 @@
 
 #define RVTEST_CODE_BEGIN                                               \
         .section .text.init;                                            \
-      /* .org 0xC0, 0x00;    */                                            \
+        .org 0xC0, 0x00;                                                \
         .align  6;                                                      \
         .weak stvec_handler;                                            \
         .weak mtvec_handler;                                            \
@@ -120,14 +116,8 @@ trap_vector:                                                            \
         beq a4, a5, _report;                                            \
         li a5, CAUSE_MACHINE_ECALL;                                     \
         beq a4, a5, _report;                                            \
-        li a5, 3;                             \
-        bne a4, a5, 2f;                         \
-        li a1, SC_SIM_OUTPORT;                                           \
-        PRINT_CHAR('B'); \
-        PRINT_CHAR('P'); \
-        PRINT_CHAR('\n');\
         /* if an mtvec_handler is defined, jump to it */                \
-2:       la a4, mtvec_handler;                                           \
+        la a4, mtvec_handler;                                           \
         beqz a4, 1f;                                                    \
         jr a4;                                                          \
         /* was it an interrupt or an exception? */                      \
@@ -142,8 +132,7 @@ other_exception:                                                        \
 _report:                                                                \
         j sc_exit;                                                      \
         .align  6;                                                      \
-        .globl _start;                                               \
-        .section .text.start;\
+        .globl _start;                                                  \
 _start:                                                                 \
         RISCV_MULTICORE_DISABLE;                                        \
         /*INIT_SPTBR;*/                                                 \
